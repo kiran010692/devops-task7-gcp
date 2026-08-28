@@ -1,0 +1,35 @@
+name: CI Pipeline Security & Quality Gate
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  code-quality-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest bandit flake8
+      - name: Lint Code Quality (Flake8)
+        run: |
+          flake8 app.py test_app.py --max-line-length=88
+      - name: Run Security Scan (Bandit)
+        run: |
+          bandit -r app.py
+      - name: Execute Unit Tests
+        run: |
+          pytest test_app.py
+  deployment-gate:
+    needs: code-quality-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulated Deployment
+        run: echo "Quality & Security gates passed! Deployment approved."
