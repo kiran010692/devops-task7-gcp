@@ -4,5 +4,6 @@ def calculate_discount(price, discount):
     return price * (1 - discount / 100)
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     print(f"Final Price: {calculate_discount(100, 20)}")
+    
